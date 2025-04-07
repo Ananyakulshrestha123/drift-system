@@ -1,0 +1,79 @@
+.dashboard-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: "Segoe UI", sans-serif;
+    color: #333;
+  }
+  
+  h2, h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+  }
+  
+  .meeting-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .meeting-form input {
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  
+  .upload-btn {
+    grid-column: span 2;
+    padding: 0.75rem;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .upload-btn:hover {
+    background-color: #1a242f;
+  }
+  
+  .transcript-box,
+  .summary-box,
+  .transcript-card {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .transcript-box p,
+  .summary-box p,
+  .transcript-card p {
+    margin: 0.5rem 0;
+    line-height: 1.5;
+  }
+  
+  .transcript-text {
+    background-color: #fff;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 0.95rem;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+  }
+  
+  .all-transcripts {
+    margin-top: 3rem;
+  }
+  
+  .transcript-card {
+    margin-bottom: 1.5rem;
+  }
+  
