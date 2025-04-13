@@ -1,13 +1,19 @@
-import sounddevice as sd
-from scipy.io.wavfile import write
+from gtts import gTTS
+from pydub import AudioSegment
 
-fs = 16000  # 16kHz sample rate
-duration = 5  # seconds
-print("Recording...")
-recording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
-sd.wait()
-write("recorded.wav", fs, recording)
-print("Recording saved.")
+# Step 1: Generate mp3 from text
+text = "Hello, this is a sample audio to test Vosk speech recognition."
+tts = gTTS(text)
+tts.save("temp.mp3")
+
+# Step 2: Convert mp3 to wav (mono, 16kHz)
+sound = AudioSegment.from_mp3("temp.mp3")
+sound = sound.set_channels(1)       # mono
+sound = sound.set_frame_rate(16000) # 16kHz
+sound.export("output.wav", format="wav")
+
+print("Audio saved as output.wav")
+
 
 
 
