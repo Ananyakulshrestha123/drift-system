@@ -14,6 +14,7 @@ sound.export("output.wav", format="wav")
 
 print("Audio saved as output.wav")
 
+ffmpeg -i input_audio.mp3 -ar 16000 -ac 1 -acodec pcm_s16le output.wav
 
 
 
