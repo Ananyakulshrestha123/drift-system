@@ -1,0 +1,17 @@
+import pyttsx3
+
+# Initialize the TTS engine
+engine = pyttsx3.init()
+
+# Text you want to convert to speech
+text = "This is a test audio for transcription."
+
+# Set properties (optional)
+engine.setProperty('rate', 150)  # Speed of speech
+engine.setProperty('volume', 1)  # Volume level (0.0 to 1.0)
+
+# Save to a file
+engine.save_to_file(text, 'test_audio.mp3')
+
+# Run the speech engine
+engine.runAndWait()
