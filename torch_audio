@@ -1,0 +1,10 @@
+import torchaudio
+
+dataset = torchaudio.datasets.LIBRISPEECH(".", url="test-clean", download=True)
+
+# Get the first sample
+waveform, sample_rate, transcript, speaker_id, chapter_id, utterance_id = dataset[0]
+
+print(f"Sample rate: {sample_rate}")
+print(f"Transcript: {transcript}")
+print(f"Waveform shape: {waveform.shape}")
