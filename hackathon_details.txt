@@ -1,0 +1,117 @@
+Encoder and Decoder Architecture: 
+Transformers have an encoder-decoder structure—the encoder (on the left) processes input data (like a sentence in a translation task) and represents it as a rich, contextualized understanding. This representation holds information about each word and its relationships, capturing the context and nuances of the input data.
+
+The decoder (on the right) then uses this representation to generate an output based on the ML task-. This architecture excels at generative tasks using rich, contextual understanding from the encoder.
+
+Self-Attention Mechanism
+At the core of Transformers lies the attention mechanism, which enables the model to selectively focus (to give “attention”) on parts of the input. This focus is critical to understanding the input context and connections between various elements.
+
+In the encoder,  self-attention involves analyzing each part of the input in relation to others, which helps it get a complete picture of the entire data. This process enables the encoder to capture both content and context effectively.
+
+For the decoder, self-attention works differently. It starts with a series of inputs and utilizes information from the encoder and its previous outputs to make predictions. Similar to constructing a sentence, the decoder adds one word and then evaluates it continuously until a complete statement or phrase is formed, usually within a limit set by the user.
+
+Multi-Head Attention
+Building on the self-attention mechanism, the multi-head attention component in Transformers goes a step further. The encoder and decoder enable the model to simultaneously focus on different parts of the input from multiple perspectives. Instead of having a single "set of eyes" to look at the data, the Transformer has multiple, each providing a unique viewpoint.
+
+In the encoder, multi-head attention dissects the input, with each 'head' focusing on different aspects of the data. For instance, in a sentence, one head might concentrate on the syntax, another might focus on semantic meaning, and another on contextual cues. 
+
+Similarly, multi-head attention enhances the model’s output accuracy in the decoder. Considering the encoder's output from multiple angles allows the decoder to make informed predictions about the next element in the sequence. Each head in the decoder pays attention to the input (via the encoder's representation) and what the decoder has already generated.
+
+Input and Output Embeddings
+In the Transformer model, input embeddings turn raw data into a high-dimensional vector space for the encoder. This makes it easier for the encoder to process single words or elements. The model learns these embeddings, which helps it understand different inputs. 
+
+Similarly, output embeddings in the decoder convert predictions into a vector format for generating human-readable text, which is also learned during training and essential for meaningful outputs. Input and output embeddings are both very important for making it easier for the Transformer to handle a wide range of tasks, ensuring that the results are correct and useful.
+
+​​Positional Encoding
+A unique challenge in Transformers is maintaining input data order since the model lacks built-in sequence understanding compared to RNNs. To overcome this, Transformers use positional encoding, assigning each element a position value based on its sequence order. 
+
+For example, in a sentence:
+
+
+Each word gets a unique position value. This way, the model knows each part of the input and its position in the sequence. This setup ensures Transformers effectively handle tasks by capturing contextual relationships and individual data details, utilizing attention mechanisms for context, and Feedforward Neural Networks (FFNNs) for refining specific characteristics.
+
+Feed-Forward Neural Networks (FFNN)
+In the Transformer architecture, the encoder and decoder feature a key element called the FFNN. After passing through attention mechanisms, the FFNN in each layer independently processes each position in the input sequence. The FFNN structure involves two linear transformations with a nonlinear activation function in between, enabling it to learn intricate data patterns. 
+
+Layer Normalization and Residual Connections
+Transformers use layer normalization and residual connections to improve training efficiency and effectiveness. Layer normalization stabilizes learning, and residual connections facilitate information flow across layers without loss.
+
+Training Strategies and Regularization Techniques
+Transformers use advanced training strategies like gradient clipping, learning rate scheduling, and regularization techniques like dropout. These methods prevent overfitting and contribute to the effective training of large models on vast datasets.
+
+How Transformers Work: A Simplified Explanation
+In a Transformer, the encoder starts by processing an input, like a sentence, using input embeddings and positional encoding to understand each word and its position. The self-attention mechanism then examines how words relate, creating a detailed context map.
+
+This information goes to the decoder, which uses its self-attention and the encoder's insights to predict the next part of the output, like a translated sentence. The decoder’s output embeddings transform these predictions into the final output format. 
+
+Throughout, feed-forward neural networks and layer normalization ensure smooth processing. These components enable Transformers to efficiently translate complex inputs into coherent outputs, balancing detailed content with overall context.
+
+Importance of Transformers
+Transformers excel because of their parallel processing capabilities, allowing them to efficiently handle large datasets. Their bidirectional understanding of context enhances the accuracy of data interpretation. Their flexible architecture adapts well to tasks like language translation and image processing. 
+
+With features like multi-head attention and support for transfer learning, transformers are efficient with large datasets and valuable for various artificial intelligence applications.
+
+
+What is ASR Model in transformer used by Deepgram?
+An ASR (Automatic Speech Recognition) model is a type of machine learning model designed to convert spoken language into written text. It processes audio signals (usually in the form of voice recordings or real-time speech)
+and transcribes them into text, making it a crucial component for applications like voice assistants, transcription services, and voice-controlled systems.
+Key Features of ASR:
+Speech-to-Text: ASR models take audio input and transcribe it into a sequence of words or phrases.
+Language Models: These models often include language processing components to improve accuracy, accounting for context, grammar, and syntax.
+Speaker Diarization: Some advanced ASR systems also identify different speakers in a conversation.
+Noise Robustness: Good ASR systems can handle noisy environments and still produce accurate
+
+
+Calculations
+Deepgram’s accuracy is usually measured using a metric called Word Error Rate (WER).
+
+WER formula:
+
+𝑊
+𝐸
+𝑅
+=
+𝑆
++
+𝐷
++
+𝐼
+𝑁
+WER= 
+N
+S+D+I
+​
+ 
+where:
+
+𝑆
+S = Number of substitutions (wrong words)
+
+𝐷
+D = Number of deletions (missing words)
+
+𝐼
+I = Number of insertions (extra wrong words)
+
+𝑁
+N = Total number of words in the reference (correct transcript)
+
+Lower WER = Better accuracy ✅
+
+
+
+
+
+Aspect | Deepgram | Whisper | Winner
+WER (clean English) | 2–5% | 5.6% | 🏆 Deepgram
+Real-time Streaming | Yes (sub-300ms) | No | 🏆 Deepgram
+Enterprise Fine-tuning | Available | No fine-tuning | 🏆 Deepgram
+Speed (Live Audio) | Ultra Fast | Batch only (Slow) | 🏆 Deepgram
+Custom Model Training | Yes (Custom models) | No | 🏆 Deepgram
+Optimized for Business Audio (calls, meetings) | Yes | No (general audio) | 🏆 Deepgram
+Scalable Cloud API | Yes | No (only local run) | 🏆 Deepgram
+audio sampling rate deepgram 16-48KHz, open ai whisper default 16 KHz 
+
+references
+https://arxiv.org/abs/2207.04158 , 
+A Survey of Task-Based Machine Learning Content Extraction Services for VIDINT
