@@ -98,7 +98,9 @@ N = Total number of words in the reference (correct transcript)
 
 Lower WER = Better accuracy ✅
 
-
+objective
+MIRA = Save time + Capture knowledge + Improve productivity 
+To build an intelligent meeting assistant that automatically records, transcribes, summarizes, and organizes meeting content, enabling users to save time, improve productivity, and easily access important information through smart search and chatbot interfaces.
 
 
 
