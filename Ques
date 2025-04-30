@@ -1,0 +1,132 @@
+MIRA: Real-Time Meeting Assistant – Presentation Q&A
+
+
+---
+
+General System Questions
+
+1. What is the purpose of your application MIRA? MIRA is a real-time meeting assistant that joins online meetings, records audio, transcribes it, summarizes the content, identifies action points, detects topic drifting, and offers a chatbot for querying meeting data and scheduling.
+
+2. How does MIRA handle real-time meetings? It uses a meeting agent that joins meetings via user-provided links. The agent captures audio, processes it in real time using Deepgram, and routes the transcript through summarization and topic tracking models.
+
+3. Can MIRA work with multiple meeting platforms like Zoom and Webex? Yes, MIRA can integrate with platforms like Zoom, Webex, and Google Meet via APIs or browser automation using tools like Selenium or Puppeteer.
+
+4. How is user data secured in MIRA? MIRA enforces authentication, access control, and uses encrypted storage in the backend. Communication is secured via HTTPS.
+
+5. What challenges did you face while integrating all modules? Challenges included handling real-time data flow, managing asynchronous audio streams, model latency, and ensuring smooth integration between frontend, backend, and ML components.
+
+
+---
+
+Speech-to-Text (Deepgram)
+
+6. Why did you choose Deepgram over other ASR systems like Whisper or Vosk? Deepgram offers real-time transcription with high accuracy, low latency, support for multiple languages, and easy API integration.
+
+7. How accurate is Deepgram in noisy environments? It performs well even in moderate noise due to its end-to-end deep learning models and noise filtering features.
+
+8. Can Deepgram transcribe in multiple languages or dialects? Yes, Deepgram supports multiple languages and accents. Custom language models can also be trained for specific needs.
+
+9. Does Deepgram process audio in real-time or batch? Both are supported, but in MIRA, Deepgram is used in real-time mode.
+
+10. How do you handle long meeting recordings or audio chunking? Audio is streamed and processed in chunks, then reassembled. Deepgram handles continuous streams effectively with timestamps.
+
+
+---
+
+Summarization with BART
+
+11. Why did you choose BART for summarization? BART is an advanced transformer model suitable for abstractive summarization with high coherence and fluency.
+
+12. How does BART handle long transcripts? We split long transcripts into segments and summarize each segment. Optionally, a meta-summarization is performed over the outputs.
+
+13. Is the summary extractive or abstractive? Abstractive, meaning it generates new sentences to concisely express the meeting content.
+
+14. How do you evaluate the quality of generated summaries? Using ROUGE scores and manual inspection for coherence, coverage, and conciseness.
+
+15. Can BART summaries be customized per user preference? Yes, summaries can be tailored for length or format by adjusting parameters or using instruction tuning.
+
+
+---
+
+Topic Drifting with Zero-shot Classification
+
+16. What is topic drifting in meetings? It's when the discussion deviates from the defined agenda. Detecting it helps maintain focus.
+
+17. How does zero-shot classification detect off-topic discussions? We compare each transcript segment with predefined agenda items using a zero-shot classifier. Low similarity indicates drifting.
+
+18. Which model or library did you use for zero-shot classification? We use Hugging Face's facebook/bart-large-mnli or similar zero-shot models.
+
+19. What labels or candidate classes are used? Labels are derived from the meeting agenda (e.g., "Project Update", "Bug Fixing", etc.).
+
+20. How is thresholding handled? If the confidence score for the expected class is below a defined threshold (e.g., 0.5), it's flagged as drifting.
+
+
+---
+
+Action Points with BART
+
+21. How does MIRA identify action items from the transcript? We fine-tune or prompt BART with instructions to extract action-oriented statements like "John will prepare the report by Friday".
+
+22. How do you separate actionable tasks from general discussion? We filter sentences with task-specific keywords and use summarization prompts targeting actions.
+
+23. Do you extract the assignee and deadline from the action points? Yes, using regular expressions or a small NLP pipeline to identify named entities and temporal expressions.
+
+24. Is there any post-processing after using BART for action points? Yes, we clean, format, and validate extracted items before saving them to the database.
+
+
+---
+
+Architecture / Flow / Database
+
+25. What database schema are you using to store transcripts, summaries, and action items? We use MongoDB with collections like users, meetings, transcripts, summaries, action_items, and topics.
+
+26. How does data flow from frontend input to model output and storage? Users input meeting links; the agent joins the call, streams audio to Deepgram, gets transcript, passes it to models, and results are stored in MongoDB.
+
+27. Can multiple users access their meeting data securely? Yes, each user's data is authenticated and scoped using unique tokens and permissions.
+
+28. Do you support real-time updates or polling? Real-time updates are supported via WebSockets. Fallback is periodic polling for lightweight clients.
+
+
+---
+
+UI and Chatbot
+
+29. How does the chatbot interact with meeting data? It queries the MongoDB database using intents like "Get summary for yesterday's meeting" or "List action items".
+
+30. Can the chatbot summarize a past meeting on request? Yes, it can retrieve and display pre-generated summaries or re-trigger summarization if needed.
+
+31. Can it schedule meetings via calendar APIs? Yes, we can integrate it with Google Calendar or Microsoft Graph APIs.
+
+32. What NLP engine powers the chatbot (Rasa)? Yes, Rasa is used for intent classification, entity extraction, and dialogue management.
+
+33. How is the chatbot trained and improved over time? We use Rasa’s NLU pipeline with real user interactions to fine-tune intents and responses.
+
+
+---
+
+Performance & Scalability
+
+34. How does the system perform with large teams or long meetings? Audio is streamed, and models are processed in batches to ensure scalability. MongoDB handles large volumes efficiently.
+
+35. Can the models run locally, or do you rely on cloud deployment? Models can be containerized and run on-premise or on cloud, depending on organizational constraints.
+
+36. How is latency managed in real-time use cases? We use async processing, load balancing, and stream chunking to keep latency low.
+
+37. How scalable is the architecture? Highly scalable using Docker, Kubernetes, and cloud-native tools. MongoDB scales horizontally.
+
+
+---
+
+Limitations and Future Scope
+
+38. What are the current limitations of your system? Limitations include dependency on internet for ASR, handling low-resource languages, and occasional summarization inconsistencies.
+
+39. Do you plan to support multi-language meetings? Yes, Deepgram supports it already; future work includes adapting summarization and classification models.
+
+40. Can your models be fine-tuned on specific organizational data? Yes, we can fine-tune or instruction-tune models like BART and use custom vocabularies in Deepgram for domain adaptation.
+
+
+---
+
+Let me know if you'd like a PDF version of this Q&A document.
+
