@@ -1,0 +1,109 @@
+IDENTIFICATION DIVISION.
+       PROGRAM-ID. TRANSACTION-BUILDER.
+
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT DETAILS-FILE ASSIGN TO 'DETAILS.DAT'
+               ORGANIZATION IS LINE SEQUENTIAL.
+           SELECT OUTPUT-FILE ASSIGN TO 'OUTPUT.DAT'
+               ORGANIZATION IS LINE SEQUENTIAL.
+
+       DATA DIVISION.
+       FILE SECTION.
+       FD DETAILS-FILE.
+       01 DETAILS-RECORD.
+           05 CH-CHANNEL         PIC X(3).
+           05 CH-MODE            PIC X(12).
+
+       FD OUTPUT-FILE.
+       01 OUTPUT-RECORD         PIC X(100).
+
+       WORKING-STORAGE SECTION.
+       01 WS-EOF                 PIC X VALUE 'N'.
+           88 END-OF-FILE        VALUE 'Y'.
+           88 NOT-END-OF-FILE    VALUE 'N'.
+
+       01 WS-TIMESTAMP.
+           05 WS-DATE            PIC 9(8).     *> YYYYMMDD
+           05 WS-TIME            PIC 9(6).     *> HHMMSS
+
+       01 WS-TRANSACTION-LAYOUT.
+           05 TRANS-CHANNEL      PIC X(3).
+           05 TRANS-MODE         PIC X(12).
+           05 TRANS-STATIC       PIC X(10) VALUE 'STATFIELD'.
+           05 TRANS-DYNAMIC      PIC X(14).    *> Timestamp Field
+           05 TRANS-UNIQUE-ID    PIC 9(6).     *> Counter or Time
+           05 FILLER             PIC X(55) VALUE SPACES.
+
+       01 WS-TRANS-ID            PIC 9(6) VALUE ZEROS.
+
+       PROCEDURE DIVISION.
+       MAIN-PARA.
+           OPEN INPUT DETAILS-FILE
+                OUTPUT OUTPUT-FILE
+
+           PERFORM UNTIL END-OF-FILE
+               READ DETAILS-FILE
+                   AT END
+                       SET END-OF-FILE TO TRUE
+                   NOT AT END
+                       PERFORM GENERATE-LAYOUT
+                       WRITE OUTPUT-RECORD FROM WS-TRANSACTION-LAYOUT
+               END-READ
+           END-PERFORM
+
+           CLOSE DETAILS-FILE OUTPUT-FILE
+           STOP RUN.
+
+       GENERATE-LAYOUT.
+           MOVE CH-CHANNEL TO TRANS-CHANNEL
+           MOVE CH-MODE    TO TRANS-MODE
+
+           PERFORM POPULATE-DYNAMIC-FIELDS
+
+           EVALUATE CH-CHANNEL
+               WHEN 'ATM'
+                   EVALUATE CH-MODE
+                       WHEN 'Interactive'
+                           PERFORM BUILD-ATM-INTERACTIVE
+                       WHEN 'Reversal'
+                           PERFORM BUILD-ATM-REVERSAL
+                       WHEN 'Advice'
+                           PERFORM BUILD-ATM-ADVICE
+                   END-EVALUATE
+               WHEN 'POS'
+                   EVALUATE CH-MODE
+                       WHEN 'Interactive'
+                           PERFORM BUILD-POS-INTERACTIVE
+                       WHEN 'Reversal'
+                           PERFORM BUILD-POS-REVERSAL
+                       WHEN 'Advice'
+                           PERFORM BUILD-POS-ADVICE
+                   END-EVALUATE
+           END-EVALUATE.
+
+       POPULATE-DYNAMIC-FIELDS.
+           ACCEPT WS-DATE FROM DATE YYYYMMDD
+           ACCEPT WS-TIME FROM TIME
+           MOVE FUNCTION NUMVAL(WS-DATE & WS-TIME(1:6)) TO TRANS-DYNAMIC
+           ADD 1 TO WS-TRANS-ID
+           MOVE WS-TRANS-ID TO TRANS-UNIQUE-ID.
+
+       BUILD-ATM-INTERACTIVE.
+           DISPLAY 'Building ATM Interactive Layout'.
+
+       BUILD-ATM-REVERSAL.
+           DISPLAY 'Building ATM Reversal Layout'.
+
+       BUILD-ATM-ADVICE.
+           DISPLAY 'Building ATM Advice Layout'.
+
+       BUILD-POS-INTERACTIVE.
+           DISPLAY 'Building POS Interactive Layout'.
+
+       BUILD-POS-REVERSAL.
+           DISPLAY 'Building POS Reversal Layout'.
+
+       BUILD-POS-ADVICE.
+           DISPLAY 'Building POS Advice Layout'.
