@@ -93,3 +93,22 @@ AI watches the timings — if your “stored” message is late, it warns and re
 Why PBFT?
 Like a meeting of trusted bank managers — they all must agree the record is correct before writing.
 
+
+Event comes in → Blockchain indexer calculates a hash.
+
+Blockchain indexer writes that hash to the blockchain ledger.
+
+Blockchain indexer forwards the full event to Splunk indexer.
+
+Later, Splunk sends an ACK back to the blockchain indexer saying:
+"Yes, I have stored this event"
+
+Blockchain indexer can now verify:
+
+Does the hash of the stored event in Splunk match the hash in blockchain?
+
+If yes → ✅ stored successfully and untampered.
+
+If no → ❌ mismatch detected.
+
+
