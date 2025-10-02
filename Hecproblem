@@ -1,0 +1,33 @@
+Problem Statement
+
+When sending data to Splunk, the HTTP Event Protocol is used for data transmission from clients to the HTTP Event Collector (HEC) on the Splunk server. The HEC responds with a success message Le HTTP status code 200 when error-free data is received. But this doesn't ensure that the data is indexed to their database as Splunk uses a separate processing pipeline for indexing and the status code is sent before data enters this pipeline. Fallures during indexing leads to data integrity issue in Splunk. These are due to outage, system failures, server issues, network issues, transmission errors, etc
+
+Splunk do provide a solution called Indexer Acknowledgement for outages and system failures. An Ack10 it passed in the response message to the client along with the HTTP status code 200 when HEC receives the data. The client will then send separate request with a list of such Acks and the HEC will respond back stating true if the
+
+data corresponding to these IDs were replicated Here are the current challenges in indeser Acknowledgement
+
+(A) Data loss during transdes - The True status only means that data is replicated to other indesers. There is still no guarantee if data wat Indexed, as anything that can't be parsed will get dropped
+
+Data duplication- Checking for the status before indesing completes will receive a false Repeated checking for lack of clanty will also receive a "false" after an initial "True This leads to unnecessary rmend of events
+
+Unknown Status Expiry of status saved on HEC due to chennel deanup or cache clearance before the client requests the indesing
+
+(D) Chronotingical lasses The ordering of events change during resend of data and cause issues when analyzing status Changel Pustory, etc
+
+(1) Multiple mursts her une ruent - The reconcilation-based pric requires an initiat sending request and another querying request
+
+
+
+Technical Solution
+
+The proposed system introduces a fingerprint-first, Af assisted blockchain verified ingestion pipeline for Splunk HTTP Event Collector Instead of
+
+considering only indexing of events directly on the Spunk file system, an immutable ledger is created by the consensus of participating indesers SHA-256 The sending application hashes an event and sends it to any indexer in the receiving cluster. That indexer must individually attempt to index the event to a central file system and additionally the active Al agent on it runs a query against the Splunk file system by itself to check the indexing status
+
+The active Al indexer agent triggers a validation process by communicating the unique ID of the event to the other participating Al agent indexers These agent indexers must then attempt to locate the receved event on the common file system by running Splunk queries from their end
+
+A Pos besed consensus is made on the individual query results, Betic example. The number of participating agents can be an odd number to achieve a majority for a consensus. Once the comemus process completes, the result is shared in the respunse to the client If an indexer is found to have wrongly triggered the validation process ov
+
+has wrongly validated the presence of an event, it loses a stakir point The chent need not send a separata query request while it receives a success message just once anit only when there is complete indexing
+
+AlAl agent integrated with the HHC monitors indesing status in near real time. It queries Splunk's indexers for the event fingerprint and applies a concensis algorithm across multiple indexers or nades it prevents error and duplication of an event. The Al can additionally predict future tremuls
