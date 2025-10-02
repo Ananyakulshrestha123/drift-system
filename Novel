@@ -30,3 +30,18 @@ Our proposal generates a cryptographic hash (fingerprint) of the full event incl
 Why Novel:
 Splunk’s built-in acknowledgement only reports replication status; it does not include intelligence or predictive capabilities. Existing consensus algorithms can coordinate nodes but cannot predict future ingestion issues or adjust parameters dynamically.
 Our Active Indexer AI Agent goes further by learning from historical ingestion patterns, predicting latency or failures, dynamically tuning verification frequency and quorum thresholds, orchestrating replays with original timestamps, and maintaining a unified view of all indexers. This adds a predictive, self-optimising layer above Splunk’s ingestion pipeline that no existing product or patent currently offers.
+
+
+1. parsing issue but status is set true
+
+2. Duplication
+
+3. Chronological Issue
+
+4.Ack Id delay response and loss
+
+5. prevent data loss
+
+6. Time delay for reconcilation
+
+7.Expiry of status information
