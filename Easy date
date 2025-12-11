@@ -1,0 +1,279 @@
+******************************************************
+* EASYTRIEVE PROGRAM TO DECOMPRESS THE PACKED DECIMAL
+******************************************************
+
+PARM DEBUG (XREF SHORT)
+
+FILE INFILE
+    CX192-ERR-CODE        1     8 A
+    CX192-ERR-ENTITY      37    4 N
+    CX192-AP-DECL-ERR-CODE 1    8 A
+    CX192-AP-DUPL-ERR-CODE 1    8 A
+    CX192-AP-FR-ERR-CODE   1    8 A
+    CX192-DLR-ERR-CODE     1    8 A
+    CX192-RTP-PPV-CODE     1    8 A
+    CX192-ERR-RET-CD      19    8 A
+    CX192-RTP-PPV-DESC    70   72 A
+    CX192-ERR-RES-CD      28    8 A
+    CX192-ERR-DATE        79    7 N   /* CYYMMDD */
+    CX192-RTP-PPV-DATE    106   7 N
+    CX192-AP-DECL-DATE    135   7 N
+    CX192-AP-DUPL-DATE    143   7 N
+    CX192-AP-FR-DATE      134   7 N
+
+FILE OUTFILE
+    OUTPUT-ERROR-TYPE   1 10 A
+    FILLER-ERROR-TYPE  11  1 A
+    OUTPUT-DTE-YY-1    12  2 N
+    OUTPUT-DTE-YY-2    14  2 N
+    FILLER-DTE-YY      16  1 A
+    OUTPUT-DTE-MM      17  2 N
+    FILLER-DTE-MM      19  1 A
+    OUTPUT-DTE-DD      20  2 N
+    FILLER-DTE         22  1 A
+    OUTPUT-TOPIC       23 30 A
+    FILLER-TOPIC       53  1 A
+    OUTPUT-LPAR        54  2 A
+
+********************************************************
+* WORKING STORAGE SECTION
+********************************************************
+
+WS-DATE            W 7 N
+WS-DATE-C          WS-DATE     1 1 N
+WS-DATE-YY         WS-DATE +1  2 N
+WS-DATE-MM         WS-DATE +3  2 N
+WS-DATE-DD         WS-DATE +5  2 N
+
+WS-SYSDATE-LONG    W 10 A
+WS-SYSDATE-MM      WS-SYSDATE-LONG      2 N
+WS-SYSDATE-YYYY    WS-SYSDATE-LONG +6   4 N
+
+********************************************************
+* MAIN LOGIC
+********************************************************
+
+JOB INPUT INFILE
+    FILLER-ERROR-TYPE = ','
+    FILLER-TOPIC      = ','
+
+    **************************************************
+    * NEW LINE ADDED → 3 MONTH FILTER CALL
+    **************************************************
+    PERFORM CHECK-LAST3MONTH
+
+    IF WS-IN-LAST3MONTH = 'N'
+        GO TO EOJ
+    END-IF
+
+    **************************************************
+    * YOUR EXISTING LOGIC STARTS HERE (UNCHANGED)
+    **************************************************
+
+    IF CX192-ERR-RET-CD = '08' AND CX192-ERR-CODE = 'FSTERROR'
+        OUTPUT-LPAR = '1S'
+        OUTPUT-ERROR-TYPE = 'PPV'
+        OUTPUT-TOPIC = 'USER ID AUDIT ISSUE'
+        WS-DATE = CX192-ERR-DATE
+        OUTPUT-DTE-YY-1 = 20
+        OUTPUT-DTE-YY-2 = WS-DATE-YY
+        FILLER-DTE-YY = '/'
+        OUTPUT-DTE-MM = WS-DATE-MM
+        FILLER-DTE-MM = '/'
+        OUTPUT-DTE-DD = WS-DATE-DD
+        FILLER-DTE = ','
+    END-IF
+
+    IF CX192-AP-DECL-ERR-CODE = 'FSTDECLN'
+        OUTPUT-ERROR-TYPE = 'PPV'
+        OUTPUT-LPAR = '1S'
+        OUTPUT-TOPIC = 'FB YOUTH CARD IND ERROR'
+        WS-DATE = CX192-AP-DECL-DATE
+        OUTPUT-DTE-YY-1 = 20
+        OUTPUT-DTE-YY-2 = WS-DATE-YY
+        FILLER-DTE-YY = '/'
+        OUTPUT-DTE-MM = WS-DATE-MM
+        FILLER-DTE-MM = '/'
+        OUTPUT-DTE-DD = WS-DATE-DD
+        FILLER-DTE = ','
+    END-IF
+
+    IF CX192-AP-DUPL-ERR-CODE = 'FSTDUPTH'
+        OUTPUT-ERROR-TYPE = 'PERMANENT'
+        OUTPUT-LPAR = '1S'
+        OUTPUT-TOPIC = 'DUPLICATE ADVICES THRESHOLD BREACH'
+        WS-DATE = CX192-AP-DUPL-DATE
+        OUTPUT-DTE-YY-1 = 20
+        OUTPUT-DTE-YY-2 = WS-DATE-YY
+        FILLER-DTE-YY = '/'
+        OUTPUT-DTE-MM = WS-DATE-MM
+        FILLER-DTE-MM = '/'
+        OUTPUT-DTE-DD = WS-DATE-DD
+        FILLER-DTE = ','
+    END-IF
+
+    IF CX192-AP-FR-ERR-CODE = 'FSTFRAUD'
+        OUTPUT-ERROR-TYPE = 'PPV'
+        OUTPUT-LPAR = '1S'
+        OUTPUT-TOPIC = 'MEM/ME2 FRAUD'
+        WS-DATE = CX192-AP-FR-DATE
+        OUTPUT-DTE-YY-1 = 20
+        OUTPUT-DTE-YY-2 = WS-DATE-YY
+        FILLER-DTE-YY = '/'
+        OUTPUT-DTE-MM = WS-DATE-MM
+        FILLER-DTE-MM = '/'
+        OUTPUT-DTE-DD = WS-DATE-DD
+        FILLER-DTE = ','
+    END-IF
+
+    IF CX192-RTP-PPV-CODE = 'FSTRFPPV'
+        OUTPUT-ERROR-TYPE = 'PPV'
+        OUTPUT-LPAR = '1S'
+        OUTPUT-TOPIC = 'RFP ZELLE OVER RTP'
+        WS-DATE = CX192-RTP-PPV-DATE
+        OUTPUT-DTE-YY-1 = 20
+        OUTPUT-DTE-YY-2 = WS-DATE-YY
+        FILLER-DTE-YY = '/'
+        OUTPUT-DTE-MM = WS-DATE-MM
+        FILLER-DTE-MM = '/'
+        OUTPUT-DTE-DD = WS-DATE-DD
+        FILLER-DTE = ','
+    END-IF
+
+    IF CX192-DLR-ERR-CODE = 'FSTDLRER'
+        OUTPUT-LPAR = '1S'
+        OUTPUT-ERROR-TYPE = 'PERMANENT'
+        OUTPUT-TOPIC = 'MARKER RECORDS'
+        WS-DATE = CX192-ERR-DATE
+        OUTPUT-DTE-YY-1 = 20
+        OUTPUT-DTE-YY-2 = WS-DATE-YY
+        FILLER-DTE-YY = '/'
+        OUTPUT-DTE-MM = WS-DATE-MM
+        FILLER-DTE-MM = '/'
+        OUTPUT-DTE-DD = WS-DATE-DD
+        FILLER-DTE = ','
+    END-IF
+
+    IF CX192-ERR-RES-CD = '003'
+        OUTPUT-ERROR-TYPE = 'PERMANENT'
+        OUTPUT-LPAR = '1S'
+        OUTPUT-TOPIC = 'INVALID HOLD DELETE TOKENS'
+    ELSE-IF CX192-ERR-RES-CD = '220' OR CX192-ERR-RES-CD = '221'
+        OUTPUT-ERROR-TYPE = 'PERMANENT'
+        OUTPUT-LPAR = '1S'
+        OUTPUT-TOPIC = 'ZELLE DUPLICATES'
+    END-IF
+
+EOJ.
+
+************************************************************
+* 3-MONTH FILTER PROC  (SEPARATE, CLEAN, NO IMPACT TO LOGIC)
+************************************************************
+CHECK-LAST3MONTH PROC
+
+WS-IN-LAST3MONTH W 1 A
+
+SYS-YYYY  W 4 N
+SYS-MM    W 2 N
+
+P1-YYYY   W 4 N
+P1-MM     W 2 N
+P2-YYYY   W 4 N
+P2-MM     W 2 N
+P3-YYYY   W 4 N
+P3-MM     W 2 N
+
+IN-C      W 1 N
+IN-YY     W 2 N
+IN-MM     W 2 N
+IN-DD     W 2 N
+IN-YYYY   W 4 N
+
+SYS-YYYY = SYSDATE
+SYS-MM   = SYSDATE +4
+
+P1-MM = SYS-MM -1
+P1-YYYY = SYS-YYYY
+IF P1-MM = 0
+   P1-MM = 12
+   P1-YYYY = SYS-YYYY -1
+END-IF
+
+P2-MM = P1-MM -1
+P2-YYYY = P1-YYYY
+IF P2-MM = 0
+   P2-MM = 12
+   P2-YYYY = P1-YYYY -1
+END-IF
+
+P3-MM = P2-MM -1
+P3-YYYY = P2-YYYY
+IF P3-MM = 0
+   P3-MM = 12
+   P3-YYYY = P2-YYYY -1
+END-IF
+
+WS-IN-LAST3MONTH = 'N'
+
+TESTDATE LABEL
+    IF IN-YYYY = P1-YYYY AND IN-MM = P1-MM
+        WS-IN-LAST3MONTH = 'Y'
+    END-IF
+    IF IN-YYYY = P2-YYYY AND IN-MM = P2-MM
+        WS-IN-LAST3MONTH = 'Y'
+    END-IF
+    IF IN-YYYY = P3-YYYY AND IN-MM = P3-MM
+        WS-IN-LAST3MONTH = 'Y'
+    END-IF
+RETURN
+
+* ---- CHECK ALL CYYMMDD FIELDS ----
+DEFINE-DATE LABEL
+    IF IN-C = 0
+        IN-YYYY = 1900 + IN-YY
+    ELSE
+        IN-YYYY = 2000 + IN-YY
+    END-IF
+RETURN
+
+* ERR-DATE
+IN-C  = CX192-ERR-DATE
+IN-YY = CX192-ERR-DATE +1
+IN-MM = CX192-ERR-DATE +3
+IN-DD = CX192-ERR-DATE +5
+PERFORM DEFINE-DATE
+PERFORM TESTDATE
+
+* AP-DECL-DATE
+IN-C  = CX192-AP-DECL-DATE
+IN-YY = CX192-AP-DECL-DATE +1
+IN-MM = CX192-AP-DECL-DATE +3
+IN-DD = CX192-AP-DECL-DATE +5
+PERFORM DEFINE-DATE
+PERFORM TESTDATE
+
+* AP-DUPL-DATE
+IN-C  = CX192-AP-DUPL-DATE
+IN-YY = CX192-AP-DUPL-DATE +1
+IN-MM = CX192-AP-DUPL-DATE +3
+IN-DD = CX192-AP-DUPL-DATE +5
+PERFORM DEFINE-DATE
+PERFORM TESTDATE
+
+* AP-FR-DATE
+IN-C  = CX192-AP-FR-DATE
+IN-YY = CX192-AP-FR-DATE +1
+IN-MM = CX192-AP-FR-DATE +3
+IN-DD = CX192-AP-FR-DATE +5
+PERFORM DEFINE-DATE
+PERFORM TESTDATE
+
+* RTP-PPV-DATE
+IN-C  = CX192-RTP-PPV-DATE
+IN-YY = CX192-RTP-PPV-DATE +1
+IN-MM = CX192-RTP-PPV-DATE +3
+IN-DD = CX192-RTP-PPV-DATE +5
+PERFORM DEFINE-DATE
+PERFORM TESTDATE
+
+END-PROC.
