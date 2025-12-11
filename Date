@@ -1,0 +1,138 @@
+************************************************************
+* PROC: CHECK LAST 3 MONTH WINDOW FOR ALL CYYMMDD DATES    *
+************************************************************
+CHECK-LAST3MONTH PROC
+
+WS-IN-LAST3MONTH   W 1 A
+
+SYS-YYYY  W 4 N
+SYS-MM    W 2 N
+
+P1-YYYY   W 4 N
+P1-MM     W 2 N
+P2-YYYY   W 4 N
+P2-MM     W 2 N
+P3-YYYY   W 4 N
+P3-MM     W 2 N
+
+IN-C      W 1 N
+IN-YY     W 2 N
+IN-MM     W 2 N
+IN-DD     W 2 N
+IN-YYYY   W 4 N
+
+************************************************************
+* READ SYSTEM DATE (YYYYMMDD)
+************************************************************
+SYS-YYYY = SYSDATE
+SYS-MM   = SYSDATE + 4
+
+************************************************************
+* CALCULATE LAST 3 MONTHS
+************************************************************
+P1-MM = SYS-MM - 1
+P1-YYYY = SYS-YYYY
+IF P1-MM = 0
+   P1-MM = 12
+   P1-YYYY = SYS-YYYY - 1
+END-IF
+
+P2-MM = P1-MM - 1
+P2-YYYY = P1-YYYY
+IF P2-MM = 0
+   P2-MM = 12
+   P2-YYYY = P1-YYYY - 1
+END-IF
+
+P3-MM = P2-MM - 1
+P3-YYYY = P2-YYYY
+IF P3-MM = 0
+   P3-MM = 12
+   P3-YYYY = P2-YYYY - 1
+END-IF
+
+************************************************************
+* INITIALIZE RESULT FLAG
+************************************************************
+WS-IN-LAST3MONTH = 'N'
+
+************************************************************
+* INTERNAL LABEL TO CHECK EACH DATE FIELD
+************************************************************
+TEST-DATE LABEL
+    IF (IN-YYYY = P1-YYYY AND IN-MM = P1-MM)
+        WS-IN-LAST3MONTH = 'Y'
+    END-IF
+    IF (IN-YYYY = P2-YYYY AND IN-MM = P2-MM)
+        WS-IN-LAST3MONTH = 'Y'
+    END-IF
+    IF (IN-YYYY = P3-YYYY AND IN-MM = P3-MM)
+        WS-IN-LAST3MONTH = 'Y'
+    END-IF
+RETURN
+
+************************************************************
+* CHECK ALL DATE FIELDS (CYYMMDD)
+************************************************************
+
+* ---------- ERR DATE ----------
+IN-C  = CX192-ERR-DATE
+IN-YY = CX192-ERR-DATE +1
+IN-MM = CX192-ERR-DATE +3
+IN-DD = CX192-ERR-DATE +5
+IF IN-C = 0
+    IN-YYYY = 1900 + IN-YY
+ELSE
+    IN-YYYY = 2000 + IN-YY
+END-IF
+PERFORM TEST-DATE
+
+* ---------- AP DECL DATE ----------
+IN-C  = CX192-AP-DECL-DATE
+IN-YY = CX192-AP-DECL-DATE +1
+IN-MM = CX192-AP-DECL-DATE +3
+IN-DD = CX192-AP-DECL-DATE +5
+IF IN-C = 0
+    IN-YYYY = 1900 + IN-YY
+ELSE
+    IN-YYYY = 2000 + IN-YY
+END-IF
+PERFORM TEST-DATE
+
+* ---------- AP DUPL DATE ----------
+IN-C  = CX192-AP-DUPL-DATE
+IN-YY = CX192-AP-DUPL-DATE +1
+IN-MM = CX192-AP-DUPL-DATE +3
+IN-DD = CX192-AP-DUPL-DATE +5
+IF IN-C = 0
+    IN-YYYY = 1900 + IN-YY
+ELSE
+    IN-YYYY = 2000 + IN-YY
+END-IF
+PERFORM TEST-DATE
+
+* ---------- AP FR DATE ----------
+IN-C  = CX192-AP-FR-DATE
+IN-YY = CX192-AP-FR-DATE +1
+IN-MM = CX192-AP-FR-DATE +3
+IN-DD = CX192-AP-FR-DATE +5
+IF IN-C = 0
+    IN-YYYY = 1900 + IN-YY
+ELSE
+    IN-YYYY = 2000 + IN-YY
+END-IF
+PERFORM TEST-DATE
+
+* ---------- RTP-PPV DATE ----------
+IN-C  = CX192-RTP-PPV-DATE
+IN-YY = CX192-RTP-PPV-DATE +1
+IN-MM = CX192-RTP-PPV-DATE +3
+IN-DD = CX192-RTP-PPV-DATE +5
+IF IN-C = 0
+    IN-YYYY = 1900 + IN-YY
+ELSE
+    IN-YYYY = 2000 + IN-YY
+END-IF
+PERFORM TEST-DATE
+
+END-PROC.
