@@ -1,0 +1,19 @@
+SELECT
+    CONVERT(date, '20' + [Date], 23) AS Txn_Date,
+    [Originated],
+
+    SUM(CASE WHEN [Type] = 'RDL' THEN [Total] ELSE 0 END) AS RDL,
+    SUM(CASE WHEN [Type] = 'RPL' THEN [Total] ELSE 0 END) AS RPL,
+    SUM(CASE WHEN [Type] = 'RIN' THEN [Total] ELSE 0 END) AS RIN,
+    SUM(CASE WHEN [Type] = 'RME' THEN [Total] ELSE 0 END) AS RME,
+    SUM(CASE WHEN [Type] = 'RMN' THEN [Total] ELSE 0 END) AS RMN,
+
+    SUM([Total]) AS [Total Count]
+
+FROM [FASTDB1].[dbo].[Remarks_TB4]
+
+WHERE [Originated] IN ('API', '3270')
+
+GROUP BY
+    CONVERT(date, '20' + [Date], 23),
+    [Originated]
